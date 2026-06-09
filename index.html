@@ -241,7 +241,7 @@
 .light { background: #1a1a1a; }
 .dark {
       background: #0d0d0d;
-      background-image: repeating-linear-gradient(45deg, transparent, transparent 4px, rgba(139,0,0,0.08) 4px, rgba(139,0,0,0.08) 8px);
+      background-image: repeating-linear-gradient(45deg, transparent 4px, rgba(139,0,0,0.08) 4px, rgba(139,0,0,0.08) 8px);
     }
 
 .dark.valid-move {
@@ -696,10 +696,22 @@
       const additionalCaptures = move.capture? getValidMoves(move.row, move.col, true) : [];
 
       if (move.capture && additionalCaptures.length > 0) {
+        // MULTI-JUMP: Keep same player
         selectedPiece = { row: move.row, col: move.col };
-        updateStatus('Another soul bleeds. Strike again!');
-        renderBoard();
+
+        if (currentPlayer === 'player2' && gameMode === 'computer') {
+          // FIX: Auto double-kill for computer
+          updateStatus('The void hungers... Another strike!');
+          renderBoard();
+          setTimeout(() => {
+            computerMove(true); // continue multi-jump
+          }, 600);
+        } else {
+          updateStatus('Another soul bleeds. Strike again!');
+          renderBoard();
+        }
       } else {
+        // END TURN
         selectedPiece = null;
         currentPlayer = currentPlayer === 'player1'? 'player2' : 'player1';
 
@@ -722,10 +734,19 @@
       }
     }
 
-    function computerMove() {
+    function computerMove(isMultiJump = false) {
       if (gameEnded || currentPlayer!== 'player2') return;
 
-      const allMoves = getAllValidMoves('player2');
+      let allMoves;
+
+      if (isMultiJump && selectedPiece) {
+        // FIX: Forced to continue with same piece for multi-jump
+        const moves = getValidMoves(selectedPiece.row, selectedPiece.col, true);
+        allMoves = moves.map(m => ({ from: selectedPiece, to: m }));
+      } else {
+        allMoves = getAllValidMoves('player2');
+      }
+
       const captures = allMoves.filter(m => m.to.capture);
       const movesToUse = captures.length > 0? captures : allMoves;
 
@@ -734,6 +755,7 @@
         return;
       }
 
+      // Prioritize captures, then advancing
       movesToUse.sort((a, b) => {
         if (a.to.capture &&!b.to.capture) return -1;
         if (!a.to.capture && b.to.capture) return 1;
