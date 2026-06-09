@@ -55,6 +55,7 @@
       justify-content: center;
       text-align: center;
       animation: fadeIn 0.6s ease-out;
+      padding: 2rem;
     }
 
 .intro.hide {
@@ -99,6 +100,7 @@
       gap: 1.5rem;
       flex-wrap: wrap;
       justify-content: center;
+      margin-bottom: 3rem;
     }
 
 .mode-btn {
@@ -118,6 +120,25 @@
       background: #ff0000;
       box-shadow: 0 0 25px rgba(255, 0, 0, 1);
       transform: translateY(-3px);
+    }
+
+.intro-credit {
+      position: absolute;
+      bottom: 2rem;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 1rem;
+      color: var(--bone);
+      font-family: 'Butcherman', serif;
+      text-shadow: 0 0 10px rgba(139, 0, 0, 0.8);
+      letter-spacing: 1px;
+    }
+
+.intro-credit span {
+      color: var(--blood);
+      font-family: 'Nosifer', cursive;
+      font-size: 1.1rem;
+      text-shadow: 0 0 15px var(--blood), 0 0 25px #ff0000;
     }
 
 .container {
@@ -406,6 +427,7 @@
       <button class="mode-btn" onclick="startGame('computer')">VS THE VOID</button>
       <button class="mode-btn" onclick="startGame('human')">PASS & PLAY</button>
     </div>
+    <div class="intro-credit">Game made by <span>Awesome a.k.a Laca</span></div>
   </div>
 
   <div class="container" id="gameContainer">
